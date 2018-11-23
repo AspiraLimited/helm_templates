@@ -1,0 +1,38 @@
+{{/*
+include does not work well in range, work-a-round it with $dot variable
+https://github.com/helm/helm/issues/3684
+*/}}
+{{- $dot := . }}
+{{- if .Values.cronjobs }}
+{{- range .Values.cronjobs }}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: "{{ include "service.fullname" $dot }}-cronjob-{{ .name }}"
+  labels:
+    app.kubernetes.io/name: {{ include "service.name" $dot }}
+    helm.sh/chart: {{ include "service.chart" $dot }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+    app.kubernetes.io/managed-by: {{ $.Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "service.name" $dot }}
+      app.kubernetes.io/instance: {{ $.Release.Name }}
+  schedule: "{{ .schedule }}"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: {{ $.Chart.Name }}
+              image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
+              imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              args:
+{{ toYaml .args | indent 14 }}
+              env:
+{{ toYaml $.Values.env | indent 14 }}
+{{- end }}
+{{- end }}
