@@ -36,12 +36,14 @@ spec:
           #   httpGet:
           #     path: /healthcheck
           #     port: http
+          {{- if not .Values.healthcheckDisabled }}
           readinessProbe:
             httpGet:
               path: /healthcheck
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
+          {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
