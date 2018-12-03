@@ -26,6 +26,8 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+{{ toYaml .Values.image.args | indent 12 }}
           env:
 {{ toYaml .Values.env | indent 12 }}
           ports:
