@@ -9,11 +9,12 @@ metadata:
     helm.sh/chart: {{ include "service.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- with .Values.ingress.annotations }}
+{{- with .Values.service.annotations }}
   annotations:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+  clusterIP: {{ .Values.service.clusterIP }}
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }} # Service's port

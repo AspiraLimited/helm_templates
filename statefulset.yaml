@@ -1,7 +1,7 @@
-{{- if .Values.deployment -}}
+{{- if .Values.statefulset -}}
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "service.fullname" . }}
   labels:
@@ -10,8 +10,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  strategy:
-{{ toYaml .Values.deployment.strategy | indent 4 }}
+  serviceName: {{ include "service.fullname" . }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
@@ -27,14 +26,11 @@ spec:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{- with .Values.image.args }}
+          TerminationGracePeriodSeconds: {{ .Values.statefulset.terminationgraceperiodseconds }}
           args:
-{{ toYaml . | indent 12 }}
-        {{- end }}
-        {{- with .Values.env }}
+{{ toYaml .Values.image.args | indent 12 }}
           env:
-{{ toYaml . | indent 12 }}
-        {{- end }}
+{{ toYaml .Values.env | indent 12 }}
           ports:
             - name: http
               containerPort: 3000
@@ -43,14 +39,12 @@ spec:
           #   httpGet:
           #     path: /healthcheck
           #     port: http
-          {{- if not .Values.healthcheckDisabled }}
           readinessProbe:
             httpGet:
               path: /healthcheck
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
-          {{- end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
     {{- with .Values.nodeSelector }}
@@ -65,4 +59,4 @@ spec:
       tolerations:
 {{ toYaml . | indent 8 }}
     {{- end }}
-{{- end }}
+{{- end}}

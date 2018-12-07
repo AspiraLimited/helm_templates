@@ -1,7 +1,7 @@
----
-{{- if .Values.ingress.enabled -}}
+{{- if .Values.ingress -}}
 {{- $fullName := include "service.fullname" . -}}
 {{- $ingressPath := .Values.ingress.path -}}
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
