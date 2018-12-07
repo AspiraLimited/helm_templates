@@ -3,6 +3,7 @@ include does not work well in range, work-a-round it with $dot variable
 https://github.com/helm/helm/issues/3684
 */}}
 {{- $dot := . }}
+{{- if .Values.ingress }}
 {{- if .Values.ingress.tls }}
 {{- range .Values.ingress.tls }}
 ---
@@ -25,5 +26,6 @@ spec:
           provider: {{ .acme_provider }}
         domains:
 {{ toYaml .hosts | indent 10 }}
+{{- end }}
 {{- end }}
 {{- end }}
