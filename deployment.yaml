@@ -35,15 +35,15 @@ spec:
           env:
 {{ toYaml . | indent 12 }}
         {{- end }}
+          {{-  if .Values.deployment.port }}
           ports:
             - name: http
-              containerPort: 3000
+              containerPort: .Values.deployment.port
               protocol: TCP
           # livenessProbe:
           #   httpGet:
           #     path: /healthcheck
           #     port: http
-          {{- if not .Values.healthcheckDisabled }}
           readinessProbe:
             httpGet:
               path: /healthcheck
