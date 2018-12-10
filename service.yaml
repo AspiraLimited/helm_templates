@@ -14,7 +14,9 @@ metadata:
 {{ toYaml . | indent 4 }}
 {{- end }}
 spec:
+{{- if .Values.service.clusterIP -}}
   clusterIP: {{ .Values.service.clusterIP }}
+{{- end }}
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }} # Service's port
