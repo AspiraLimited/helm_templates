@@ -10,8 +10,10 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
+{{- with .Values.deployment.strategy }}
   strategy:
-{{ toYaml .Values.deployment.strategy | indent 4 }}
+{{ toYaml . | indent 4 }}
+{{- end }}
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
