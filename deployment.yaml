@@ -25,6 +25,13 @@ spec:
         app.kubernetes.io/name: {{ include "service.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      # specifies to local dns resolver to use tcp over udp, work-a-round for
+      # such problem:
+      # https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeoutspaste>
+      dnsConfig:
+        options:
+          - name: use-vc
+      dnsPolicy: ClusterFirst
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
