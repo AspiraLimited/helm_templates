@@ -60,8 +60,24 @@ spec:
             initialDelaySeconds: 10
             periodSeconds: 10
           {{- end }}
+          volumeMounts:
+          {{- if .Values.persistence }}
+            - name: data
+              mountPath: {{ .Values.persistence.mountPath }}
+              subPath: {{ .Values.persistence.subPath }}
+          {{ end }}
           resources:
 {{ toYaml .Values.resources | indent 12 }}
+    {{- with .Values.securityContext }}
+      securityContext:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+      volumes:
+      {{- if .Values.persistence }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "service.fullname" . }}-data
+      {{ end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:
 {{ toYaml . | indent 8 }}
