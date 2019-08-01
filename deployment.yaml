@@ -1,4 +1,4 @@
-{{- if .Values.deployment -}}
+{{- if .Values.deployment.enabled -}}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,6 +32,20 @@ spec:
         options:
           - name: use-vc
       dnsPolicy: ClusterFirst
+      initContainers:
+        {{- if .Values.persistence }}
+        - name: fix-data-dir-ownership
+          image: alpine:3.9
+          args:
+            - sh
+            - -c
+            - |-
+              chown -v 1000:1000 /mnt
+          volumeMounts:
+            - name: data
+              mountPath: /mnt
+              subPath: {{ .Values.persistence.subPath }}
+        {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -76,7 +90,7 @@ spec:
       {{- if .Values.persistence }}
         - name: data
           persistentVolumeClaim:
-            claimName: {{ include "service.fullname" . }}-data
+            claimName: {{ .Values.persistence.pvc }}
       {{ end }}
     {{- with .Values.nodeSelector }}
       nodeSelector:

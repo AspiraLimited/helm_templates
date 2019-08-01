@@ -37,9 +37,25 @@ spec:
             - name: {{ $.Chart.Name }}
               image: "{{ $.Values.image.repository }}:{{ $.Values.image.tag }}"
               imagePullPolicy: {{ $.Values.image.pullPolicy }}
+              command:
+{{ toYaml .command | indent 16 }}
               args:
-{{ toYaml .args | indent 14 }}
+{{ toYaml .args | indent 16 }}
               env:
-{{ toYaml $.Values.env | indent 14 }}
+{{ toYaml $.Values.env | indent 16 }}
+              volumeMounts:
+              {{- if $.Values.persistence }}
+                - name: data
+                  mountPath: {{ $.Values.persistence.mountPath }}
+                  subPath: {{ $.Values.persistence.subPath }}
+              {{ end }}
+          volumes:
+          {{- if $.Values.persistence }}
+            - name: data
+              persistentVolumeClaim:
+                claimName: {{ $.Values.persistence.pvc }}
+          {{ end }}
+          resources:
+{{ toYaml .resources | indent 12 }}
 {{- end }}
 {{- end }}
