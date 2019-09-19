@@ -63,17 +63,11 @@ spec:
             - name: http
               containerPort: {{ .Values.deployment.port }}
               protocol: TCP
-          # livenessProbe:
-          #   httpGet:
-          #     path: /healthcheck
-          #     port: http
-          readinessProbe:
-            httpGet:
-              path: /healthcheck
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
           {{- end }}
+          livenessProbe:
+{{ toYaml .Values.livenessProbe | indent 12 }}
+          readinessProbe:
+{{ toYaml .Values.readinessProbe | indent 12 }}
           volumeMounts:
           {{- if .Values.persistence }}
             - name: data
