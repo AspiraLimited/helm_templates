@@ -1,14 +1,22 @@
 {{- if .Values.VerticalPodAutoscaler -}}
 ---
-apiVersion: autoscaling.k8s.io/v1beta1
+apiVersion: autoscaling.k8s.io/v1beta2
 kind: VerticalPodAutoscaler
 metadata:
   name: {{ include "service.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "service.name" . }}
+    helm.sh/chart: {{ include "service.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ include "service.name" . }}
-      app.kubernetes.io/instance: {{ .Release.Name }}
+  targetRef:
+    apiVersion: apps/v1
+    kind: {{ if .Values.deployment.enabled }}Deployment{{ else }}StatefulSet{{ end }}
+    name: {{ include "service.fullname" . }}
   updatePolicy:
     updateMode: "{{ .Values.VerticalPodAutoscaler.updateMode }}"
+  resourcePolicy:
+    containerPolicies:
+{{ toYaml .Values.VerticalPodAutoscaler.containerPolicies | indent 6 }}
 {{- end }}
