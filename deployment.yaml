@@ -48,7 +48,7 @@ spec:
               subPath: {{ .Values.persistence.subPath }}
         {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
         {{- with .Values.image.args }}

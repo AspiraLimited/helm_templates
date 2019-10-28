@@ -30,7 +30,7 @@ spec:
           - name: use-vc
       dnsPolicy: ClusterFirst
       containers:
-        - name: {{ .Chart.Name }}
+        - name: main
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           TerminationGracePeriodSeconds: {{ .Values.statefulset.terminationgraceperiodseconds }}
