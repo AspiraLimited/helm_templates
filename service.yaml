@@ -20,6 +20,9 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }} # Service's port
+{{- if (eq .Values.service.type "ClusterIP") }}
+      nodePort: null
+{{- end }}
       targetPort: http # Should match the containerPort used by the Deployment's containers
       protocol: TCP
       name: http

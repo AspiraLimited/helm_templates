@@ -31,6 +31,7 @@ spec:
       dnsConfig:
         options:
           - name: use-vc
+          - name: no-tld-query
       dnsPolicy: ClusterFirst
       initContainers:
         {{- if .Values.persistence }}
