@@ -30,8 +30,8 @@ spec:
       # https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeoutspaste>
       dnsConfig:
         options:
-          - name: use-vc
-          - name: no-tld-query
+          - name: ndots
+            value: "1"
       dnsPolicy: ClusterFirst
       initContainers:
         {{- if .Values.persistence }}
