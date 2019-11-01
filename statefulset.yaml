@@ -27,7 +27,8 @@ spec:
       # https://www.weave.works/blog/racy-conntrack-and-dns-lookup-timeoutspaste>
       dnsConfig:
         options:
-          - name: use-vc
+          - name: ndots
+            value: "1"
       dnsPolicy: ClusterFirst
       containers:
         - name: main
